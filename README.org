@@ -15,13 +15,7 @@ The recording above demonstrates editing a chezmoi template with source file on 
 (use-package chezmoi)
   #+end_src
 
-  The ~chezmoi~ package includes Ediff, Dired, Magit, and completion support. The age integration is a separate package (see [[Integrations]]). If you install from git with straight or elpaca, add it with a ~:files~ entry:
-
-  #+begin_src emacs-lisp :noweb yes
-(use-package chezmoi-age
-  :straight (chezmoi-age :host github :repo "tuh8888/chezmoi.el"
-                         :files ("extensions/chezmoi-age.el")))
-  #+end_src
+  The ~chezmoi~ package includes Ediff, Dired, Magit, age, and completion support (see [[Integrations]]).
 
   Add keybindings to some functions. Or call using ~M-x <cmd>~.
 
@@ -86,11 +80,7 @@ The recording above demonstrates editing a chezmoi template with source file on 
 
 ** Age
 
-   [[https://github.com/anticomputer/age.el][age.el]] integration is a separate package, ~chezmoi-age~. When loaded, ~chezmoi-ediff~ reuses your age identity and recipients from chezmoi's config so encrypted files open without prompting.
-
-   #+begin_src emacs-lisp :noweb yes
-(use-package chezmoi-age)
-   #+end_src
+   When [[https://github.com/anticomputer/age.el][age.el]] is installed, ~chezmoi-ediff~ reuses your age identity and recipients from chezmoi's config so encrypted files open without prompting. ~chezmoi~ does not depend on age.el.
 
 ** Org
 
