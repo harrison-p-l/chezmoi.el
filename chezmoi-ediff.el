@@ -41,6 +41,46 @@
 (defvar-local chezmoi-ediff--source-file nil
   "Current ediff source-file.")
 
+;; From age.el, which is optional.
+(defvar age-always-use-default-keys)
+(defvar age-default-identity)
+(defvar age-default-recipient)
+
+(defun chezmoi-ediff--age-config ()
+  "Return the age section of chezmoi's config, or nil."
+  (let ((config (chezmoi-get-config)))
+    (and (hash-table-p config) (gethash "age" config))))
+
+(defun chezmoi-ediff-age-recipients ()
+  "Return the age recipients from chezmoi's config."
+  (when-let ((age (chezmoi-ediff--age-config)))
+    (let ((recipient (gethash "recipient" age))
+          (recipients (gethash "recipients" age)))
+      (append (and (stringp recipient) (not (string-empty-p recipient))
+                   (list recipient))
+              recipients))))
+
+(defun chezmoi-ediff-age-identity ()
+  "Return the age identity from chezmoi's config."
+  (when-let ((age (chezmoi-ediff--age-config)))
+    (gethash "identity" age)))
+
+(defun chezmoi-ediff--age-default-keys-p ()
+  "Return non-nil if chezmoi's age keys are age.el's defaults."
+  (let ((recips (chezmoi-ediff-age-recipients)))
+    (and (equal (chezmoi-ediff-age-identity) age-default-identity)
+         (equal (if (equal 1 (length recips)) (car recips) recips)
+                age-default-recipient))))
+
+(defun chezmoi-ediff--ediff-files (source-file file)
+  "Run `ediff-files' on SOURCE-FILE and FILE.
+When age.el is installed and chezmoi uses age's default keys, bind
+`age-always-use-default-keys' so encrypted files open without prompting."
+  (if (require 'age nil t)
+      (let ((age-always-use-default-keys (chezmoi-ediff--age-default-keys-p)))
+        (ediff-files source-file file))
+    (ediff-files source-file file)))
+
 (defun chezmoi-ediff--ediff-get-region-contents (n buf-type ctrl-buf &optional start end)
   "An overriding fn for `ediff-get-region-contents'.
 Converts and applies template diffs from the source-file.
@@ -79,7 +119,7 @@ Note: Does not run =chezmoi merge=."
   (let* ((source-file (chezmoi-find file)))
     (advice-add 'ediff-get-region-contents :override #'chezmoi-ediff--ediff-get-region-contents)
     (setq chezmoi-ediff--source-file source-file)
-    (ediff-files source-file file)
+    (chezmoi-ediff--ediff-files source-file file)
     (add-hook 'ediff-cleanup-hook #'chezmoi-ediff--ediff-cleanup-hook nil t)
     (add-hook 'ediff-quit-hook #'chezmoi-ediff--ediff-quit-hook nil t)))
 
