@@ -75,6 +75,18 @@
   (thread-last (chezmoi-managed)
 	       (cl-remove-if #'file-directory-p)))
 
+(declare-function magit-status-setup-buffer "magit-status" (&optional directory))
+
+;;;###autoload
+(defun chezmoi-magit-status ()
+  "Show the Magit status of the chezmoi source repository.
+Requires Magit, which `chezmoi' does not depend on."
+  (interactive)
+  (if (and (require 'magit nil t)
+           (fboundp 'magit-status-setup-buffer))
+      (magit-status-setup-buffer (cl-first (chezmoi--dispatch "source-path")))
+    (user-error "`chezmoi-magit-status' requires Magit")))
+
 (defun chezmoi-target-file-p (file)
   "Return non-nil if FILE is in the target state."
   (thread-last (chezmoi-managed-files)

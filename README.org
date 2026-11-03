@@ -15,12 +15,12 @@ The recording above demonstrates editing a chezmoi template with source file on 
 (use-package chezmoi)
   #+end_src
 
-  The ~chezmoi~ package includes Ediff, Dired, and completion support. Magit and age integrations are separate packages (see [[Integrations]]). If you install from git with straight or elpaca, add them with a ~:files~ entry:
+  The ~chezmoi~ package includes Ediff, Dired, Magit, and completion support. The age integration is a separate package (see [[Integrations]]). If you install from git with straight or elpaca, add it with a ~:files~ entry:
 
   #+begin_src emacs-lisp :noweb yes
-(use-package chezmoi-magit
-  :straight (chezmoi-magit :host github :repo "tuh8888/chezmoi.el"
-                           :files ("extensions/chezmoi-magit.el")))
+(use-package chezmoi-age
+  :straight (chezmoi-age :host github :repo "tuh8888/chezmoi.el"
+                         :files ("extensions/chezmoi-age.el")))
   #+end_src
 
   Add keybindings to some functions. Or call using ~M-x <cmd>~.
@@ -82,11 +82,7 @@ The recording above demonstrates editing a chezmoi template with source file on 
 
 ** Magit
 
-   Magit integration is a separate package, ~chezmoi-magit~, so that ~chezmoi~ itself does not depend on Magit. Use ~chezmoi-magit-status~ to jump to the ~magit-status~ for your chezmoi.
-
-   #+begin_src emacs-lisp :noweb yes
-(use-package chezmoi-magit)
-   #+end_src
+   Use ~chezmoi-magit-status~ to jump to the ~magit-status~ for your chezmoi source directory. ~chezmoi~ does not depend on Magit; the command loads it when called and signals an error if it is not installed.
 
 ** Age
 
